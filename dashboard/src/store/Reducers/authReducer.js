@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../../api/api";
 
 const initialState = {
         successMessage: "",
@@ -6,6 +7,21 @@ const initialState = {
         loader: false,
         userInfo: ''
     }
+
+export const admin_login = createAsyncThunk(
+    'auth/admin_login',
+    async(info)=>{
+        console.log(info);
+        try{
+            const {data} = await api.post('/admin/login', info, {withCredentials: true});
+            console.log(data);
+        }
+        catch(err){
+            console.error(err)
+        }
+    }
+);
+
 
 export const authReducer = createSlice({
     name: "auth",
