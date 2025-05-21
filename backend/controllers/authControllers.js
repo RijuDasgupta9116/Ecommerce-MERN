@@ -1,14 +1,41 @@
+const adminModel = require("../models/adminModel");
+const { responseReturn } = require("../utils/response");
+const bcrypt = require("bcrypt");
+const { createToken } = require("../utils/tokenCreate");
+
 class authControllers{
     admin_login = async (req, res) => {
         const { email, password } = req.body;
         try {
-            
+            const admin = await adminModel.findOne({ email }).select("+password");
+
+            console.log(password);
+            if(admin){
+                const match = await bcrypt.compare(String(password), String(admin.password));
+                
+                if (match) {
+                    const token = await createToken({
+                        id: admin._id,
+                        role: admin.role
+                    })
+                    res.cookie('accessToken', token,{
+                        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                    })
+                    responseReturn(res, 200, {token,message: "Login successful" })
+                } else {
+                    responseReturn(res, 401, {error: "Invalid password"});
+                }
+
+
+            }
+            else{
+                responseReturn(res, 404, {error: "Email not found"});
+            }
         } catch (error) {
-            console.log(error);
-            res.status(500).json({ message: "Internal server error" });
+            responseReturn(res,500, {error: error.message});
             
         }
-        console.log(req.body);
+        // console.log(req.body);
     }
 }
 

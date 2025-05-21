@@ -18,7 +18,7 @@ export const admin_login = createAsyncThunk(
             // console.log("inside try block")
         }
         catch(err){
-            console.error(err)
+            console.log(err.response.data);
         }
     }
 );
