@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { dbConnect } = require('./utils/db');
 const app = express();
 
 app.use(cors({
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 });
 
 const port = process.env.PORT;
+dbConnect();
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
